@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /*
+   * Focus indicator colour is a variable, not a fixed brass ring.
+   *
+   * Measured contrast (WCAG 2.1 relative luminance):
+   *   brass  #C5A059 on ivory    #F9F8F6 = 2.32:1  -> below the 3:1 floor
+   *   brass  #C5A059 on charcoal #1A2421 = 6.48:1  -> passes
+   *   charcoal #1A2421 on ivory  #F9F8F6 = 15.01:1 -> passes
+   *
+   * So light surfaces get a charcoal ring and dark surfaces get a brass ring.
+   * Dark sections opt in by adding the .on-dark class.
+   */
+  :root {
+    --focus-ring: #1a2421;
+  }
+
+  .on-dark {
+    --focus-ring: #c5a059;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-ivory font-sans text-coffee antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Zero-specificity so component classes always win on everything but focus. */
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: #c5a059;
+    color: #1a2421;
+  }
+
+  /* Sticky nav offset so anchor targets are not hidden under the header. */
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /*
+   * Signature detail: a short brass rule that sits above every section title,
+   * echoing the inlay lines on the furniture. Decorative only - it never
+   * carries information, so its 2.32:1 contrast on ivory is acceptable.
+   */
+  .rule-brass {
+    @apply block h-px w-12 bg-brass;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
